@@ -113,7 +113,167 @@ Infubinol = clean_data.loc[clean_data["Drug Regimen"] == "Infubinol", :]
 Ceftamin = clean_data.loc[clean_data["Drug Regimen"] == "Ceftamin", :]
 
 # Start by getting the last (greatest) timepoint for each mouse
+
 Capomulin_last = Capomulin.groupby('Mouse ID').max()['Timepoint']
 Capomulin_vol = pd.DataFrame(Capomulin_last)
 Capomulin_merge = pd.merge(Capomulin_vol, clean_data, on=("Mouse ID","Timepoint"),how="left")
 Capomulin_merge.head()
+
+# Merge this group df with the original DataFrame to get the tumor volume at the last timepoint
+
+# Merging and finding outlires for Capomulin
+
+# Put treatments into a list for for loop (and later for plot labels)
+Capomulin_tumors = Capomulin_merge["Tumor Volume (mm3)"]
+
+quartiles = Capomulin_tumors.quantile([.25,.5,.75])
+lowerq = quartiles[0.25]
+upperq = quartiles[0.75]
+iqr = upperq-lowerq
+
+
+print(f"The lower quartile of Capomulin tumors: {lowerq}")
+print(f"The upper quartile of Capomulin tumors: {upperq}")
+print(f"The interquartile range of Capomulin tumors: {iqr}")
+print(f"The median of Capomulin tumors: {quartiles[0.5]} ")
+
+lower_bound = lowerq - (1.5*iqr)
+upper_bound = upperq + (1.5*iqr)
+
+print(f"Values below {lower_bound} could be outliers.")
+print(f"Values above {upper_bound} could be outliers.")
+
+# Merging and finding outlires for Ramicane
+Ramicane_last = Ramicane.groupby('Mouse ID').max()['Timepoint']
+Ramicane_vol = pd.DataFrame(Ramicane_last)
+Ramicane_merge = pd.merge(Ramicane_vol, clean_data, on=("Mouse ID","Timepoint"),how="left")
+Ramicane_merge.head()
+
+# Put treatments into a list for for loop (and later for plot labels)
+Ramicane_merge.to_csv("output.csv")
+Ramicane_tumors = Ramicane_merge["Tumor Volume (mm3)"]
+
+# Calculate the IQR and quantitatively determine if there are any potential outliers. 
+    # Locate the rows which contain mice on each drug and get the tumor volumes
+    # add subset 
+    # Determine outliers using upper and lower bounds
+    
+quartiles =Ramicane_tumors.quantile([.25,.5,.75])
+lowerq = quartiles[0.25]
+upperq = quartiles[0.75]
+iqr = upperq-lowerq
+
+
+print(f"The lower quartile of Ramicane tumors is: {lowerq}")
+print(f"The upper quartile of Ramicane tumors is: {upperq}")
+print(f"The interquartile range of Ramicane tumors is: {iqr}")
+print(f"The median of Ramicane tumors is: {quartiles[0.5]} ")
+
+lower_bound = lowerq - (1.5*iqr)
+upper_bound = upperq + (1.5*iqr)
+
+print(f"Values below {lower_bound} could be outliers.")
+print(f"Values above {upper_bound} could be outliers.")
+
+# Merging and finding outlires for Infubinol
+
+Infubinol_last = Infubinol.groupby('Mouse ID').max()['Timepoint']
+Infubinol_vol = pd.DataFrame(Infubinol_last)
+Infubinol_merge = pd.merge(Infubinol_vol, clean_data, on=("Mouse ID","Timepoint"),how="left")
+Infubinol_merge.head()
+
+Infubinol_tumors = Infubinol_merge["Tumor Volume (mm3)"]
+
+# Calculate the IQR and quantitatively determine if there are any potential outliers. 
+    # Locate the rows which contain mice on each drug and get the tumor volumes
+    # add subset 
+    # Determine outliers using upper and lower bounds
+    
+quartiles =Infubinol_tumors.quantile([.25,.5,.75])
+lowerq = quartiles[0.25]
+upperq = quartiles[0.75]
+iqr = upperq-lowerq
+
+
+print(f"The lower quartile of Infubinol tumors is: {lowerq}")
+print(f"The upper quartile of Infubinol tumors is: {upperq}")
+print(f"The interquartile range of Infubinol tumors is: {iqr}")
+print(f"The median of Infubinol tumors is: {quartiles[0.5]} ")
+
+lower_bound = lowerq - (1.5*iqr)
+upper_bound = upperq + (1.5*iqr)
+
+
+print(f"Values below {lower_bound} could be outliers.")
+print(f"Values above {upper_bound} could be outliers.")
+Infubinol_merge.to_csv("output.csv")
+
+# Merging and finding outlires for Infubinol
+Ceftamin_last = Ceftamin.groupby('Mouse ID').max()['Timepoint']
+Ceftamin_vol = pd.DataFrame(Ceftamin_last)
+Ceftamin_merge = pd.merge(Ceftamin_vol, clean_data, on=("Mouse ID","Timepoint"),how="left")
+Ceftamin_merge.head()
+
+Ceftamin_tumors = Ceftamin_merge["Tumor Volume (mm3)"]
+
+# Calculate the IQR and quantitatively determine if there are any potential outliers. 
+    # Locate the rows which contain mice on each drug and get the tumor volumes
+    # add subset 
+    # Determine outliers using upper and lower bounds
+    
+quartiles = Ceftamin_tumors.quantile([.25,.5,.75])
+lowerq = quartiles[0.25]
+upperq = quartiles[0.75]
+iqr = upperq-lowerq
+
+print(f"The lower quartile of treatment is: {lowerq}")
+print(f"The upper quartile of temperatures is: {upperq}")
+print(f"The interquartile range of temperatures is: {iqr}")
+print(f"The the median of temperatures is: {quartiles[0.5]} ")
+
+
+lower_bound = lowerq - (1.5*iqr)
+upper_bound = upperq + (1.5*iqr)
+
+print(f"Values below {lower_bound} could be outliers.")
+print(f"Values above {upper_bound} could be outliers.")
+
+# Generate a box plot that shows the distrubution of the tumor volume for each treatment group.
+box_plot = [Capomulin_tumors, Ramicane_tumors, Infubinol_tumors, Ceftamin_tumors]
+Regimen = ['Capomulin', 'Ramicane', 'Infubinol','Ceftamin']
+
+fig1, ax1 = plt.subplots()
+ax1.set_title('Tumor Volume per Drug Regimen')
+ax1.set_ylabel('Tumor volume (mm3)')
+ax1.set_xlabel('Drug Regimen')
+ax1.boxplot(box_plot, labels=Regimen, widths = 0.25, vert=True)
+plt.show()
+
+# Generate a line plot of tumor volume vs. time point for a mouse treated with Capomulin
+
+forline_df = Capomulin.loc[Capomulin["Mouse ID"] == "b128",:]
+forline_df.head()
+
+x_axis = forline_df["Timepoint"]
+tumsiz = forline_df["Tumor Volume (mm3)"]
+
+fig1, ax1 = plt.subplots()
+plt.title('Capomulin treatmeant of mouse b128')
+plt.plot(x_axis, tumsiz,linewidth=2, markersize=15,marker="o",color="g", label="Fahreneit")
+plt.xlabel('Timepoint (Days)')
+plt.ylabel('Tumor Volume (mm3)')
+
+# Generate a scatter plot of average tumor volume vs. mouse weight for the Capomulin regimen
+avg_vol =Capomulin.groupby(['Mouse ID']).mean()
+
+
+plt.scatter(avg_capm_vol['Weight (g)'],avg_vol['Tumor Volume (mm3)'], color="g")
+plt.title('Mouse Weight Versus Average Tumor Volume')
+plt.xlabel('Weight (g)',fontsize =12)
+plt.ylabel('Averag Tumor Volume (mm3)')
+
+# Calculate the correlation coefficient and linear regression model 
+# for mouse weight and average tumor volume for the Capomulin regimen
+
+correlation = st.pearsonr(avg_vol['Weight (g)'],avg_capm_vol['Tumor Volume (mm3)'])
+print(f"The correlation between mouse weight and the average tumor volume is {round(correlation[0],2)}")
