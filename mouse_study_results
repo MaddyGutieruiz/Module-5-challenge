@@ -1,3 +1,12 @@
+# Pymaceuticals Inc.
+---
+
+### Analysis
+
+- From this analysis we can see that the drug Capomulin is the most effective to reduce the volume of the tumors within the mice sample. 
+- Between 25 - 35 days is when we saw the largest decrease in tumor volume size from the mice using the Capomulin drug.
+- We could see that there was a trend for larger mice to have larger tumor volumes. 
+
 # Dependencies and Setup
 import matplotlib.pyplot as plt
 import pandas as pd
